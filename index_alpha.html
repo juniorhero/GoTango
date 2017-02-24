@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Tracking System</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script  type="text/javascript" src="typeahead.bundle.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    // Defining the local dataset
+    var id = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '1008', '1009', '1010'];
+    
+    // Constructing the suggestion engine
+    var id = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: id
+    });
+    
+    // Initializing the typeahead
+    $('.typeahead').typeahead({
+        hint: true,
+        highlight: true, /* Enable substring highlighting */
+        minLength: 1 /* Specify minimum characters required for showing result */
+    },
+    {
+        name: 'id',
+        source: id
+    });
+});  
+</script>
+<style type="text/css">
+.bs-example {
+	font-family: sans-serif;
+	position: relative;
+	margin: 100px;
+}
+.typeahead, .tt-query, .tt-hint {
+	border: 2px solid #CCCCCC;
+	border-radius: 8px;
+	font-size: 22px; /* Set input font size */
+	height: 30px;
+	line-height: 30px;
+	outline: medium none;
+	padding: 8px 12px;
+	width: 396px;
+}
+.typeahead {
+	background-color: #FFFFFF;
+}
+.typeahead:focus {
+	border: 2px solid #0097CF;
+}
+.tt-query {
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+.tt-hint {
+	color: #999999;
+}
+.tt-menu {
+	background-color: #FFFFFF;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	margin-top: 12px;
+	padding: 8px 0;
+	width: 422px;
+}
+.tt-suggestion {
+	font-size: 22px;  /* Set suggestion dropdown font size */
+	padding: 3px 20px;
+}
+.tt-suggestion:hover {
+	cursor: pointer;
+	background-color: #0097CF;
+	color: #FFFFFF;
+}
+.tt-suggestion p {
+	margin: 0;
+}
+</style>
+
+
+
+ <script>
+ $(document).ready(function() {
+  $('#track').click(function() {
+  $(function() {
+
+
+   var rowdy = [];
+
+   //var searchboy = '1003';
+   var searchboy = $('#searchterm').val();
+
+
+   $.getJSON('orders.json', function(data) {
+       $.each(data.orders, function(i, f) {
+   
+        
+          var tblRow = "<tr>" + "<td>" + f.orderid + "</td>" +
+           "<td>" + f.pickup + "</td>" + "<td>" + f.repair + "</td>" + "<td>" + f.delivery + "</td>" + "</tr>"
+           
+           rowdy.push({'orderid': f.orderid , 'pickup': f.pickup, 'repair': f.repair, 'delivery': f.delivery});
+           console.log(rowdy,"hello2");
+
+
+
+
+           $(tblRow).appendTo("#userdata tbody");
+
+
+
+
+            var repairval = $.map(rowdy, function(value, key) {
+     		if (value.orderid == searchboy)
+     	     {
+     		return value.repair
+        //return value.repair + " Pickup by " + value.pickup;
+     		  }
+			});
+			$('#a').val(repairval);
+
+			console.log(repairval,"repairval");  
+
+
+			var pickupval = $.map(rowdy, function(value, key) {
+     		if (value.orderid == searchboy)
+     	     {
+     		return value.pickup
+        //return value.repair + " Pickup by " + value.pickup;
+     		  }
+			});
+			$('#b').val(pickupval);
+			console.log(pickupval,"pickupval");  
+
+			var deliveryval = $.map(rowdy, function(value, key) {
+     		if (value.orderid == searchboy)
+     	     {
+     		return value.delivery
+        //return value.repair + " Pickup by " + value.pickup;
+     		  }
+			});
+			$('#c').val(deliveryval);
+			console.log(deliveryval,"deliveryval");  
+
+
+     });
+
+   });       
+
+
+
+  
+
+
+   }); 
+
+});       
+
+
+   }); 
+
+
+
+
+</script>
+
+<!--
+<script>
+      $("#searchterm").keyup(function(e){
+        var q = $("#searchterm").val();
+        $.getJSON('orders.json',
+        {
+          srsearch: q,
+          action: "query",
+          list: "search",
+          format: "json"
+        },
+        function(data) {
+          $("#results").empty();
+          $("#results").append("<p>Results for <b>" + q + "</b></p>");
+          $.each(data.query.search, function(i,item){
+            $("#results").append("<div><a href='http://en.wikipedia.org/wiki/" + encodeURIComponent(item.title) + "'>" + item.title + "</a><br>" + item.snippet + "<br><br></div>");
+          });
+        });
+      });
+    </script>
+
+
+-->
+
+
+
+
+</head>
+<body>
+    <div class="bs-example">
+		<h2>Type your Order ID</h2>
+		<form id="form">
+			<table>
+				<tr><td>
+
+        <input id="searchterm" name="searchterm" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false"> </td><td>
+        <input id="track" name="track" style="height: 52px;width: 258%;" type="button" value="Track"> </td>
+    </tr>
+</table>
+     
+  </form>
+    </div>
+
+
+
+        <table style="margin: 79px;" id= "userdata" border="2">
+  <thead>
+            <th>Order ID</th>
+            <th>Pickup Info</th>
+            <th>Repair Info</th>
+            <th>Delivery Info</th>
+        </thead>
+      <tbody>
+
+       </tbody>
+   </table>
+
+
+
+    <input type="text" id="a"  />
+
+<input type="text" id="b"  />
+
+<input type="text" id="c"  />
+
+  
+
+</body>
+</html>                                		
